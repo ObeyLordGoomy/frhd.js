@@ -1,0 +1,12 @@
+{
+    "name": "frhd.js",
+    "version": "1.0.0",
+    "description": "An app to communicacte with FRHD",
+    "main": "FRHD.js",
+    "author": "GoodraFRHD",
+    "license": "GNU General Public License v3.0",
+    "dependencies": {
+      "request": "^2.88.0"
+    }
+  }
+  
