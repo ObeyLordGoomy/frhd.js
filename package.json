@@ -1,12 +1,16 @@
 {
-    "name": "frhd.js",
-    "version": "1.0.0",
-    "description": "An app to communicacte with FRHD",
-    "main": "FRHD.js",
-    "author": "GoodraFRHD",
-    "license": "GNU General Public License v3.0",
-    "dependencies": {
-      "request": "^2.88.0"
-    }
+  "name": "frhd.js",
+  "version": "1.0.1",
+  "description": "An app to communicacte with FRHD",
+  "main": "FRHD.js",
+  "author": "GoodraFRHD",
+  "license": "GNU General Public License v3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ObeyLordGoomy/frhd.js.git"
+  },
+  "dependencies": {
+    "request": "^2.88.0",
+    "user": "0.0.0"
   }
-  
+}
