@@ -1,23 +1,59 @@
-const req = require('request');
+const https = require('https');
 
 //Vars
-let baseURL = 'https://www.freeriderhd.com/';
+let token = null,
+    baseURL = 'www.freeriderhd.com';
 
 //Functions
 function err(info) {
     console.log(`Error: ${info}`);
     ret(!1, !1, `Error: ${info}`);
 }
+
 function ret(tf, d = !1, ms = !1) {
     return { status: tf, data: d, msg: ms }
 }
-function rData(path, body, cookie) {
-    return {
-        headers: cookie ? { 'content-type': 'application/x-www-form-urlencoded', 'cookie': cookie } : { 'content-type': 'application/x-www-form-urlencoded' },
-        url: baseURL + path,
-        body: body,
-        json: true
-    }
+
+function request(method, path, body, callback) {
+    let err,
+        options = {
+            hostname: baseURL,
+            port: 443,
+            path: path,
+            method: method
+        };
+    method == 'POST' ? (options.headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'carset': 'UTF-8'
+    }) : void 0;
+
+    const req = https.request(options, res => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', data => body += data);
+        res.on('end', () => {
+            const resp = JSON.parse(body);
+            callback(err, resp)
+        });
+    });
+
+    req.on('error', e => err = e);
+
+    if (method == 'POST')
+        req.write(`${body}&ajax=!0&app_signed_request=${token}&t_1=ref&t_2=desk`);
+
+    req.end();
+}
+
+function t2t(ticks) {
+    let t = ticks / 30 * 1e3;
+    t = parseInt(t, 10);
+    let e = (t / 6e4) | 0
+        , i = (t - 6e4 * e) / 1e3;
+    return i = i.toFixed(2),
+        10 > e && (e = e),
+        10 > i && (i = "0" + i),
+        e + ":" + i
 }
 
 //JSDoc Stuff
@@ -38,6 +74,7 @@ class FRHD {
         this.token = null,
             this.user = null;
     }
+
     /**
      * Gets info about a user from name.
      * Does not require login
@@ -48,7 +85,7 @@ class FRHD {
         if (!uName || typeof uName !== 'string') return err('Invalid arguments');
         req(rData(`u/${uName}?ajax=true`),
             (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
+                if (err) return err(err);
                 if (!data.user) return ret(!1, !1, `No user by the name of "${uName}"`);
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -63,7 +100,7 @@ class FRHD {
         if (!this.token) return err('You are not logged in');
         req(rData(`?ajax=true`, `frhd_app_sr=${this.token}`),
             (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
+                if (err) return err(err);
                 if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
@@ -73,11 +110,12 @@ class FRHD {
     /**
      * Sets token.
      * Does not require login
-     * @param {string} token - Account token (ask Goodra how to obtain)
+     * @param {string} asr - Account token (ask Goodra how to obtain)
      */
-    login(token = '') {
-        if (!token || typeof token !== 'string') return err('Invalid arguments');
-        this.token = token;
+    login(asr = '') {
+        if (!asr || typeof asr !== 'string') return err('Invalid arguments');
+        this.token = asr;
+        token = asr;
     }
     /**
      * Logs you out
@@ -85,7 +123,8 @@ class FRHD {
     logout() {
         if (!this.token) return err('You are not logged in');
         this.token = null,
-            this.user = null;
+            this.user = null,
+            token = null;
     }
     /**
      * Changes your account name
@@ -95,10 +134,9 @@ class FRHD {
     changeName(name, cb = () => { }) {
         if (!name || typeof name !== 'string') return err('Invalid arguments');
         if (!this.token) return err('You are not logged in');
-        req.post(rData(`account/edit_profile?name=u_name&value=${name}&ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
-                if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
+        request('POST', '/account/edit_profile', `name=u_name&value=${encodeURIComponent(name)}`,
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -112,10 +150,9 @@ class FRHD {
     changeDesc(desc, cb = () => { }) {
         if (!desc || typeof desc !== 'string') return err('Invalid arguments');
         if (!this.token) return err('You are not logged in');
-        req.post(rData(`account/edit_profile?name=about&value=${desc}&ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
-                if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
+        request('POST', '/account/edit_profile', `name=about&value=${encodeURIComponent(desc).replace('%20', '+')}`,
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -130,10 +167,9 @@ class FRHD {
     changePassword(oldpass, newpass, cb = () => { }) {
         if (!newpass || typeof newpass !== 'string' || !oldpass || typeof oldpass !== 'string') return err('Invalid arguments');
         if (!this.token) return err('You are not logged in');
-        req.post(rData(`account/change_password?old_password=${oldpass}&new_password=${newpass}&ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
-                if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
+        request('POST', '/account/change_password', `old_password=${encodeURIComponent(oldpass).replace('%20', '+')}&new_password=${encodeURIComponent(newpass).replace('%20', '+')}`,
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -147,10 +183,9 @@ class FRHD {
     forumPass(pass) {
         if (!pass || typeof pass !== 'string') return err('Invalid arguments');
         if (!this.token) return err('You are not logged in');
-        req(rData(`account/update_forum_account?password=${pass}&ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
-                if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
+        request('POST', '/account/update_forum_account', `password=${encodeURIComponent(pass).replace('%20', '+')}`,
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -162,10 +197,9 @@ class FRHD {
      */
     buyHat(cb = () => { }) {
         if (!this.token) return err('You are not logged in');
-        req.post(rData(`store/buy?ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
-                if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
+        request('POST', '/store/buy', '',
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -179,15 +213,13 @@ class FRHD {
     equipHat(hatId, cb = () => { }) {
         if (!hatId || typeof hatId !== 'number') return err('Invalid arguments');
         if (!this.token) return err('You are not logged in');
-        req.post(rData(`store/equip?item_id=${hatId}&ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
-                if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
+        request('POST', '/store/equip', `item_id=${hatId}`,
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
-
     }
     /**
      * Gets data about the track.
@@ -199,7 +231,7 @@ class FRHD {
         if (!tId || typeof tId !== 'number') return err('Invalid arguments');
         req(rData(`t/${tId}?ajax=true`),
             (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
+                if (err) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -211,29 +243,13 @@ class FRHD {
      * @param {string} msg - Message Of comment
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
-    comment(msg, cb = () => { }) {
+    comment(tId, msg, cb = () => { }) {
         if (!tId || typeof tId !== 'number' || !msg || typeof msg !== 'string') return err('Invalid arguments');
         if (!this.token) return err('You are not logged in');
-        req.post(rData(`track_comments/post?t_id=${tId}&msg=${msg}&ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
+        request('POST', '/track_comments/post', `t_id=${tId}&msg=${encodeURIComponent(msg).replace('%20', '+')}`,
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
-                cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
-            }
-        );
-    }
-    /**
-     * Gets the ghost of a user on a track.
-     * Does not require login
-     * @param {number} tId - ID of the track
-     * @param {number} uId - ID of the user
-     * @param {RequestCallback} [cb = () => {}] - Callback
-     */
-    race(tId, uId, cb = () => { }) {
-        if (!tId || typeof tId !== 'number' || !uId || typeof uId !== 'number') return err('Invalid arguments');
-        req(rData(`track_api/load_races?t_id=${tId}&u_ids=${uId}&ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`),
-            (err, response, data) => {
-                if (err && response.statusCode !== 200) return err(err);
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
