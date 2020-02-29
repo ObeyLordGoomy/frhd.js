@@ -6,7 +6,7 @@ let token = null,
 
 //Functions
 function err(info) {
-    console.log(`Error: ${info}`);
+    //console.log(`Error: ${info}`);
     ret(!1, !1, `Error: ${info}`);
 }
 
@@ -22,25 +22,28 @@ function request(method, path, body, callback) {
             path: path,
             method: method
         };
-    method == 'POST' ? (options.headers = {
+    options.headers = method == 'POST' ? {
         'Content-Type': 'application/x-www-form-urlencoded',
         'carset': 'UTF-8'
-    }) : void 0;
+    } : {
+            'Content-Type': 'application/json; charset=utf-8'
+        };
 
     const req = https.request(options, res => {
         let body = '';
         res.setEncoding('utf8');
         res.on('data', data => body += data);
         res.on('end', () => {
-            const resp = JSON.parse(body);
-            callback(err, resp)
+            //const resp = JSON.parse(body);
+            callback(err, body)
         });
     });
 
     req.on('error', e => err = e);
 
-    if (method == 'POST')
+    if (body !== void 0)
         req.write(`${body}&ajax=!0&app_signed_request=${token}&t_1=ref&t_2=desk`);
+        //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
 
     req.end();
 }
@@ -83,8 +86,9 @@ class FRHD {
      */
     getUserData(uName, cb = () => { }) {
         if (!uName || typeof uName !== 'string') return err('Invalid arguments');
-        req(rData(`u/${uName}?ajax=true`),
-            (err, response, data) => {
+        request('GET', `/u/${uName}?ajax=true`, void 0,
+            (err, data) => {
+                data = JSON.parse(data);
                 if (err) return err(err);
                 if (!data.user) return ret(!1, !1, `No user by the name of "${uName}"`);
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
@@ -98,8 +102,8 @@ class FRHD {
      */
     loginVerify(cb = () => { }) {
         if (!this.token) return err('You are not logged in');
-        req(rData(`?ajax=true`, `frhd_app_sr=${this.token}`),
-            (err, response, data) => {
+        request('GET', `/datapoll/poll_request`, `notifications=!0`,
+            (err, data) => {
                 if (err) return err(err);
                 if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
                 this.user = data.user;
@@ -112,10 +116,11 @@ class FRHD {
      * Does not require login
      * @param {string} asr - Account token (ask Goodra how to obtain)
      */
-    login(asr = '') {
+    login(asr = '', cb = () => { }) {
         if (!asr || typeof asr !== 'string') return err('Invalid arguments');
         this.token = asr;
         token = asr;
+        cb();
     }
     /**
      * Logs you out
@@ -180,7 +185,7 @@ class FRHD {
      * @param {string} pass - Password
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
-    forumPass(pass) {
+    forumPass(pass, cb = () => { }) {
         if (!pass || typeof pass !== 'string') return err('Invalid arguments');
         if (!this.token) return err('You are not logged in');
         request('POST', '/account/update_forum_account', `password=${encodeURIComponent(pass).replace('%20', '+')}`,
@@ -229,9 +234,9 @@ class FRHD {
      */
     getTrackData(tId, cb = () => { }) {
         if (!tId || typeof tId !== 'number') return err('Invalid arguments');
-        req(rData(`t/${tId}?ajax=true`),
-            (err, response, data) => {
-                if (err) return err(err);
+        request('GET', `/t/${tId}?ajax=true`, '',
+            (err, data) => {
+                if (err !== void 0) return err(err);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
