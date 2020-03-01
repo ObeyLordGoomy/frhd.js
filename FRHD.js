@@ -5,7 +5,7 @@ let token = null,
     baseURL = 'www.freeriderhd.com';
 
 //Functions
-function err(info) {
+function error(info) {
     //console.log(`Error: ${info}`);
     ret(!1, !1, `Error: ${info}`);
 }
@@ -43,7 +43,7 @@ function request(method, path, body, callback) {
 
     if (body !== void 0)
         req.write(`${body}&ajax=!0&app_signed_request=${token}&t_1=ref&t_2=desk`);
-    //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
+        //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
 
     req.end();
 }
@@ -85,11 +85,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     getUserData(uName, cb = () => { }) {
-        if (!uName || typeof uName !== 'string') return err('Invalid arguments');
+        if (!uName || typeof uName !== 'string') return error('Invalid arguments');
         request('GET', `/u/${uName}?ajax=true`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
-                if (err) return cb(err(err));
+                if (err) return cb(error(err));
                 if (!data.user) return cb(ret(!1, !1, `No user by the name of "${uName}"`));
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -101,10 +101,10 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     loginVerify(cb = () => { }) {
-        if (!this.token) return err('You are not logged in');
-        request('GET', `/datapoll/poll_request`, `notifications=!0`,
+        if (!this.token) return cb(error('You are not logged in'));
+        request('POST', `/datapoll/poll_request`, `notifications=!0`,
             (err, data) => {
-                if (err) return err(err);
+                if (err) return cb(error(err));
                 if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
@@ -117,7 +117,7 @@ class FRHD {
      * @param {string} asr - Account token (ask Goodra how to obtain)
      */
     login(asr = '', cb = () => { }) {
-        if (!asr || typeof asr !== 'string') return err('Invalid arguments');
+        if (!asr || typeof asr !== 'string') return cb(error('Invalid arguments'));
         this.token = asr;
         token = asr;
         cb();
@@ -126,7 +126,7 @@ class FRHD {
      * Logs you out
      */
     logout() {
-        if (!this.token) return err('You are not logged in');
+        if (!this.token) return error('You are not logged in');
         this.token = null,
             this.user = null,
             token = null;
@@ -137,11 +137,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     changeName(name, cb = () => { }) {
-        if (!name || typeof name !== 'string') return err('Invalid arguments');
-        if (!this.token) return err('You are not logged in');
+        if (!name || typeof name !== 'string') return error('Invalid arguments');
+        if (!this.token) return error('You are not logged in');
         request('POST', '/account/edit_profile', `name=u_name&value=${encodeURIComponent(name)}`,
             (err, data) => {
-                if (err !== void 0) return err(err);
+                if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -153,8 +153,8 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     changeDesc(desc, cb = () => { }) {
-        if (!desc || typeof desc !== 'string') return err('Invalid arguments');
-        if (!this.token) return err('You are not logged in');
+        if (!desc || typeof desc !== 'string') return error('Invalid arguments');
+        if (!this.token) return error('You are not logged in');
         request('POST', '/account/edit_profile', `name=about&value=${encodeURIComponent(desc).replace('%20', '+')}`,
             (err, data) => {
                 if (err !== void 0) return err(err);
@@ -170,11 +170,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     changePassword(oldpass, newpass, cb = () => { }) {
-        if (!newpass || typeof newpass !== 'string' || !oldpass || typeof oldpass !== 'string') return err('Invalid arguments');
-        if (!this.token) return err('You are not logged in');
+        if (!newpass || typeof newpass !== 'string' || !oldpass || typeof oldpass !== 'string') return cb(error('Invalid arguments'));
+        if (!this.token) return error('You are not logged in');
         request('POST', '/account/change_password', `old_password=${encodeURIComponent(oldpass).replace('%20', '+')}&new_password=${encodeURIComponent(newpass).replace('%20', '+')}`,
             (err, data) => {
-                if (err !== void 0) return err(err);
+                if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -186,11 +186,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     forumPass(pass, cb = () => { }) {
-        if (!pass || typeof pass !== 'string') return err('Invalid arguments');
-        if (!this.token) return err('You are not logged in');
+        if (!pass || typeof pass !== 'string') return cb(error('Invalid arguments'));
+        if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/account/update_forum_account', `password=${encodeURIComponent(pass).replace('%20', '+')}`,
             (err, data) => {
-                if (err !== void 0) return err(err);
+                if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -201,10 +201,10 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     buyHat(cb = () => { }) {
-        if (!this.token) return err('You are not logged in');
+        if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/store/buy', '',
             (err, data) => {
-                if (err !== void 0) return err(err);
+                if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -216,11 +216,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     equipHat(hatId, cb = () => { }) {
-        if (!hatId || typeof hatId !== 'number') return err('Invalid arguments');
-        if (!this.token) return err('You are not logged in');
+        if (!hatId || typeof hatId !== 'number') return cb(error('Invalid arguments'));
+        if (!this.token) return error('You are not logged in');
         request('POST', '/store/equip', `item_id=${hatId}`,
             (err, data) => {
-                if (err !== void 0) return err(err);
+                if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -233,11 +233,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     getTrackData(tId, cb = () => { }) {
-        if (!tId || typeof tId !== 'number') return err('Invalid arguments');
+        if (!tId || typeof tId !== 'number') return cb(error('Invalid arguments'));
         request('GET', `/t/${tId}?ajax=true`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
-                if (err) return cb(err(err));
+                if (err) return cb(error(err));
                 if (!data.track) return cb(ret(!1, !1, `No track with the id of "${tId}"`));
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -250,11 +250,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     comment(tId, msg, cb = () => { }) {
-        if (!tId || typeof tId !== 'number' || !msg || typeof msg !== 'string') return err('Invalid arguments');
-        if (!this.token) return err('You are not logged in');
+        if (!tId || typeof tId !== 'number' || !msg || typeof msg !== 'string') return cb(error('Invalid arguments'));
+        if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/track_comments/post', `t_id=${tId}&msg=${encodeURIComponent(msg).replace('%20', '+')}`,
             (err, data) => {
-                if (err !== void 0) return err(err);
+                if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
