@@ -43,7 +43,7 @@ function request(method, path, body, callback) {
 
     if (body !== void 0)
         req.write(`${body}&ajax=!0&app_signed_request=${token}&t_1=ref&t_2=desk`);
-        //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
+    //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
 
     req.end();
 }
@@ -126,7 +126,7 @@ class FRHD {
      * Logs you out
      */
     logout() {
-        if (!this.token) return error('You are not logged in');
+        if (!this.token) return cb(error('You are not logged in'));
         this.token = null,
             this.user = null,
             token = null;
@@ -137,8 +137,8 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     changeName(name, cb = () => { }) {
-        if (!name || typeof name !== 'string') return error('Invalid arguments');
-        if (!this.token) return error('You are not logged in');
+        if (!name || typeof name !== 'string') return cb(error('Invalid arguments'));
+        if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/account/edit_profile', `name=u_name&value=${encodeURIComponent(name)}`,
             (err, data) => {
                 if (err !== void 0) return cb(error(err));
@@ -153,11 +153,11 @@ class FRHD {
      * @param {RequestCallback} [cb = () => {}] - Callback
      */
     changeDesc(desc, cb = () => { }) {
-        if (!desc || typeof desc !== 'string') return error('Invalid arguments');
-        if (!this.token) return error('You are not logged in');
+        if (!desc || typeof desc !== 'string') return cb(error('Invalid arguments'));
+        if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/account/edit_profile', `name=about&value=${encodeURIComponent(desc).replace('%20', '+')}`,
             (err, data) => {
-                if (err !== void 0) return err(err);
+                if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
@@ -171,7 +171,7 @@ class FRHD {
      */
     changePassword(oldpass, newpass, cb = () => { }) {
         if (!newpass || typeof newpass !== 'string' || !oldpass || typeof oldpass !== 'string') return cb(error('Invalid arguments'));
-        if (!this.token) return error('You are not logged in');
+        if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/account/change_password', `old_password=${encodeURIComponent(oldpass).replace('%20', '+')}&new_password=${encodeURIComponent(newpass).replace('%20', '+')}`,
             (err, data) => {
                 if (err !== void 0) return cb(error(err));
@@ -217,7 +217,7 @@ class FRHD {
      */
     equipHat(hatId, cb = () => { }) {
         if (!hatId || typeof hatId !== 'number') return cb(error('Invalid arguments'));
-        if (!this.token) return error('You are not logged in');
+        if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/store/equip', `item_id=${hatId}`,
             (err, data) => {
                 if (err !== void 0) return cb(error(err));
