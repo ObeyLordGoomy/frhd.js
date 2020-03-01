@@ -89,8 +89,8 @@ class FRHD {
         request('GET', `/u/${uName}?ajax=true`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
-                if (err) return err(err);
-                if (!data.user) return ret(!1, !1, `No user by the name of "${uName}"`);
+                if (err) return cb(err(err));
+                if (!data.user) return cb(ret(!1, !1, `No user by the name of "${uName}"`));
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
@@ -237,8 +237,8 @@ class FRHD {
         request('GET', `/t/${tId}?ajax=true`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
-                if (err) return err(err);
-                if (!data.track) return ret(!1, !1, `No track with the id of "${tId}"`);
+                if (err) return cb(err(err));
+                if (!data.track) return cb(ret(!1, !1, `No track with the id of "${tId}"`));
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
