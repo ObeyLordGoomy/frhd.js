@@ -43,7 +43,7 @@ function request(method, path, body, callback) {
 
     if (body !== void 0)
         req.write(`${body}&ajax=!0&app_signed_request=${token}&t_1=ref&t_2=desk`);
-        //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
+    //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
 
     req.end();
 }
@@ -234,10 +234,11 @@ class FRHD {
      */
     getTrackData(tId, cb = () => { }) {
         if (!tId || typeof tId !== 'number') return err('Invalid arguments');
-        request('GET', `/t/${tId}?ajax=true`, '',
+        request('GET', `/t/${tId}?ajax=true`, void 0,
             (err, data) => {
-                if (err !== void 0) return err(err);
-                this.user = data.user;
+                data = JSON.parse(data);
+                if (err) return err(err);
+                if (!data.track) return ret(!1, !1, `No track with the id of "${tId}"`);
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
