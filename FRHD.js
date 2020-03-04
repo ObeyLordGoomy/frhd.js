@@ -86,7 +86,7 @@ class FRHD {
      */
     getUserData(uName, cb = () => { }) {
         if (!uName || typeof uName !== 'string') return error('Invalid arguments');
-        request('GET', `/u/${uName}?ajax=true`, void 0,
+        request('GET', `/u/${uName.replace(/[^A-Z0-9]/ig, "")}?ajax=true`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
                 if (err) return cb(error(err));
@@ -139,7 +139,7 @@ class FRHD {
     changeName(name, cb = () => { }) {
         if (!name || typeof name !== 'string') return cb(error('Invalid arguments'));
         if (!this.token) return cb(error('You are not logged in'));
-        request('POST', '/account/edit_profile', `name=u_name&value=${encodeURIComponent(name)}`,
+        request('POST', '/account/edit_profile', `name=u_name&value=${encodeURIComponent(name.replace(/[^A-Z0-9]/ig, ""))}`,
             (err, data) => {
                 if (err !== void 0) return cb(error(err));
                 this.user = data.user;
