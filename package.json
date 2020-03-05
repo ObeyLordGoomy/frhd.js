@@ -1,8 +1,8 @@
 {
   "name": "frhd.js",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "An app to communicacte with FRHD",
-  "main": "FRHD.js",
+  "main": "index.js",
   "author": "GoodraFRHD",
   "license": "GNU General Public License v3.0",
   "repository": {
