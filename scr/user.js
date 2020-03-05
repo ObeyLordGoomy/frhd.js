@@ -74,7 +74,7 @@ class user {
      * @constructor
      * @param {string} [connectionURL = 'www.freeriderhd.com']
      */
-    constructor() {
+    constructor(connectionURL = 'www.freeriderhd.com') {
         this.token = null,
             this.user = null;
         baseURL = connectionURL

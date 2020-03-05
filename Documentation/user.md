@@ -4,39 +4,44 @@
 
 -   [RequestCallback][1]
     -   [Parameters][2]
--   [getUserData][3]
-    -   [Parameters][4]
--   [loginVerify][5]
-    -   [Parameters][6]
--   [login][7]
-    -   [Parameters][8]
--   [logout][9]
--   [changeName][10]
-    -   [Parameters][11]
--   [changeDesc][12]
-    -   [Parameters][13]
--   [changePassword][14]
-    -   [Parameters][15]
--   [forumPass][16]
-    -   [Parameters][17]
--   [buyHat][18]
-    -   [Parameters][19]
--   [equipHat][20]
-    -   [Parameters][21]
--   [getTrackData][22]
-    -   [Parameters][23]
--   [comment][24]
-    -   [Parameters][25]
+-   [connectionURL][3]
+-   [getUserData][4]
+    -   [Parameters][5]
+-   [loginVerify][6]
+    -   [Parameters][7]
+-   [login][8]
+    -   [Parameters][9]
+-   [logout][10]
+-   [changeName][11]
+    -   [Parameters][12]
+-   [changeDesc][13]
+    -   [Parameters][14]
+-   [changePassword][15]
+    -   [Parameters][16]
+-   [forumPass][17]
+    -   [Parameters][18]
+-   [buyHat][19]
+    -   [Parameters][20]
+-   [equipHat][21]
+    -   [Parameters][22]
+-   [getTrackData][23]
+    -   [Parameters][24]
+-   [comment][25]
+    -   [Parameters][26]
 
 ## RequestCallback
 
 Callback for all funtions
 
-Type: [Function][26]
+Type: [Function][27]
 
 ### Parameters
 
--   `null-null` **[Object][27]&lt;{status: [boolean][28], data: [JSON][29], msg: [string][30]}>** Json object with status, data, and message (this requires only one param)
+-   `null-null` **[Object][28]&lt;{status: [boolean][29], data: [JSON][30], msg: [string][31]}>** Json object with status, data, and message (this requires only one param)
+
+## connectionURL
+
+Gets the connection url
 
 ## getUserData
 
@@ -45,8 +50,8 @@ Does not require login
 
 ### Parameters
 
--   `uName` **[string][30]** Username of user
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `uName` **[string][31]** Username of user
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## loginVerify
 
@@ -54,7 +59,7 @@ Verifies Login
 
 ### Parameters
 
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## login
 
@@ -63,7 +68,7 @@ Does not require login
 
 ### Parameters
 
--   `asr` **[string][30]** Account token (ask Goodra how to obtain) (optional, default `''`)
+-   `asr` **[string][31]** Account token (ask Goodra how to obtain) (optional, default `''`)
 -   `cb`   (optional, default `()=>{}`)
 
 ## logout
@@ -76,8 +81,8 @@ Changes your account name
 
 ### Parameters
 
--   `name` **[string][30]** New name
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `name` **[string][31]** New name
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## changeDesc
 
@@ -85,8 +90,8 @@ Changes your description
 
 ### Parameters
 
--   `desc` **[string][30]** New description
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `desc` **[string][31]** New description
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## changePassword
 
@@ -94,9 +99,9 @@ Sets password
 
 ### Parameters
 
--   `oldpass` **[string][30]** Old password
--   `newpass` **[string][30]** New password
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `oldpass` **[string][31]** Old password
+-   `newpass` **[string][31]** New password
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## forumPass
 
@@ -104,8 +109,8 @@ Changes forum password
 
 ### Parameters
 
--   `pass` **[string][30]** Password
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `pass` **[string][31]** Password
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## buyHat
 
@@ -113,7 +118,7 @@ Buys a hat
 
 ### Parameters
 
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## equipHat
 
@@ -121,8 +126,8 @@ Equips a hat
 
 ### Parameters
 
--   `hatId` **[number][32]** ID of hat
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `hatId` **[number][33]** ID of hat
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## getTrackData
 
@@ -131,8 +136,8 @@ Does not require login
 
 ### Parameters
 
--   `tId` **[number][32]** ID of track
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `tId` **[number][33]** ID of track
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 ## comment
 
@@ -140,70 +145,72 @@ Leaves a comment on a track
 
 ### Parameters
 
--   `tId` **[number][32]** ID of the track
--   `msg` **[string][30]** Message Of comment
--   `cb` **[RequestCallback][31]** Callback (optional, default `()=>{}`)
+-   `tId` **[number][33]** ID of the track
+-   `msg` **[string][31]** Message Of comment
+-   `cb` **[RequestCallback][32]** Callback (optional, default `()=>{}`)
 
 [1]: #requestcallback
 
 [2]: #parameters
 
-[3]: #getuserdata
+[3]: #connectionurl
 
-[4]: #parameters-1
+[4]: #getuserdata
 
-[5]: #loginverify
+[5]: #parameters-1
 
-[6]: #parameters-2
+[6]: #loginverify
 
-[7]: #login
+[7]: #parameters-2
 
-[8]: #parameters-3
+[8]: #login
 
-[9]: #logout
+[9]: #parameters-3
 
-[10]: #changename
+[10]: #logout
 
-[11]: #parameters-4
+[11]: #changename
 
-[12]: #changedesc
+[12]: #parameters-4
 
-[13]: #parameters-5
+[13]: #changedesc
 
-[14]: #changepassword
+[14]: #parameters-5
 
-[15]: #parameters-6
+[15]: #changepassword
 
-[16]: #forumpass
+[16]: #parameters-6
 
-[17]: #parameters-7
+[17]: #forumpass
 
-[18]: #buyhat
+[18]: #parameters-7
 
-[19]: #parameters-8
+[19]: #buyhat
 
-[20]: #equiphat
+[20]: #parameters-8
 
-[21]: #parameters-9
+[21]: #equiphat
 
-[22]: #gettrackdata
+[22]: #parameters-9
 
-[23]: #parameters-10
+[23]: #gettrackdata
 
-[24]: #comment
+[24]: #parameters-10
 
-[25]: #parameters-11
+[25]: #comment
 
-[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[26]: #parameters-11
 
-[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
 
-[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/JSON
+[29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[30]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[30]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/JSON
 
-[31]: #requestcallback
+[31]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[32]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[32]: #requestcallback
+
+[33]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
