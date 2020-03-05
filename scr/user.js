@@ -1,4 +1,5 @@
-const https = require('https');
+const https = require('https'),
+    EventEmitter = require('events');
 
 //Vars
 let token = null,
@@ -65,16 +66,47 @@ function t2t(ticks) {
  */
 
 //Exports
-class user {
+class user extends EventEmitter {
     /**
      * Sets up the class
      * @constructor
-     * @param {string} [connectionURL = 'www.freeriderhd.com']
+     * @param {number} [pingInterval = 60] - amount in seconds between pings (greater or equal to 30)
+     * @param {string} [connectionURL = 'www.freeriderhd.com'] - for custom servers
      */
-    constructor(connectionURL = 'www.freeriderhd.com') {
-        this.token = null,
-            this.user = null;
-        baseURL = connectionURL
+    constructor(pingInterval = 60, connectionURL = 'www.freeriderhd.com') {
+        super();
+        pingInterval < 30 && (pingInterval = 30);
+        this.pingInterval = pingInterval * 1000,
+            this.token = null,
+            this.user = null,
+            this._getNotifs,
+            this._notification_count,
+            this.latestNotification;
+        baseURL = connectionURL;
+        this.on('newListener', (event, listener) => {
+            if (event != 'notification') return;
+            if (!this.token) return;
+            this._getNotifs = setInterval(() => {
+                this.datapoll(({ status, data, msg }) => {
+                    if (!status || data.notification_count == 0) return;
+                    this.notification_count = data.notification_count;
+                    this.getNotifications(({ status, data, msg }) => {
+                        let notifications = [];;
+                        for (const key in data.notification_days) {
+                            if (data.notification_days.hasOwnProperty(key)) {
+                                const element = data.notification_days[key];
+                                for (const iterator of object) {
+                                    //work here
+                                    if (notifications.length == this.notification_count) break;
+                                }
+                            }
+                            if (notifications.length == this.notification_count) break;
+                        }
+                        notifications.forEach(notif => this.emit('notification', notif))
+                    });
+                });
+            });
+        }, pingInterval);
     }
     /**
      * Gets the connection url
@@ -134,6 +166,35 @@ class user {
         this.token = null,
             this.user = null,
             token = null;
+    }
+    /**
+     * Gets a datapoll
+     * @param {RequestCallback} [cb = () => {}] - Callback
+     */
+    datapoll(cb = () => { }) {
+        if (!this.token) return cb(error('You are not logged in'));
+        request('POST', '/datapoll/poll_request', 'notifications=true',
+            (err, data) => {
+                if (err !== void 0) return cb(error(err));
+                cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
+            }
+        );
+    }
+    /**
+     * Gets notifications
+     * @param {number} tId - ID of track
+     * @param {RequestCallback} [cb = () => {}] - Callback
+     */
+    getNotifications(cb = () => { }) {
+        if (!tId || typeof tId !== 'number') return cb(error('Invalid arguments'));
+        request('GET', `https://www.freeriderhd.com/notifications?ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`, void 0,
+            (err, data) => {
+                data = JSON.parse(data);
+                if (err) return cb(error(err));
+                //if (!data.track) return cb(ret(!1, !1, `No track with the id of "${tId}"`));
+                cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
+            }
+        );
     }
     /**
      * Changes your account name
