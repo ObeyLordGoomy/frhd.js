@@ -72,12 +72,19 @@ class user {
     /**
      * Starts the mod
      * @constructor
+     * @param {string} [connectionURL = 'www.freeriderhd.com']
      */
     constructor() {
         this.token = null,
             this.user = null;
+        baseURL = connectionURL
     }
-
+    /**
+     * Gets the connection url
+     */
+    get connectionURL() {
+        return baseURL
+    }
     /**
      * Gets info about a user from name.
      * Does not require login
