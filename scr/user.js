@@ -6,7 +6,6 @@ let token = null,
 
 //Functions
 function error(info) {
-    //console.log(`Error: ${info}`);
     ret(!1, !1, `Error: ${info}`);
 }
 
@@ -34,7 +33,6 @@ function request(method, path, body, callback) {
         res.setEncoding('utf8');
         res.on('data', data => body += data);
         res.on('end', () => {
-            //const resp = JSON.parse(body);
             callback(err, body)
         });
     });
@@ -43,7 +41,6 @@ function request(method, path, body, callback) {
 
     if (body !== void 0)
         req.write(`${body}&ajax=!0&app_signed_request=${token}&t_1=ref&t_2=desk`);
-    //else req.write(`ajax=!0&t_1=ref&t_2=desk`)
 
     req.end();
 }
