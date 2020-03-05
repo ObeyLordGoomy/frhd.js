@@ -95,7 +95,7 @@ class user extends EventEmitter {
                         for (const key in data.notification_days) {
                             if (data.notification_days.hasOwnProperty(key)) {
                                 const element = data.notification_days[key];
-                                for (const iterator of object) {
+                                for (const iterator of element.notifications) {
                                     //work here
                                     if (notifications.length == this.notification_count) break;
                                 }
