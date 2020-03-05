@@ -67,7 +67,7 @@ function t2t(ticks) {
 //Exports
 class user {
     /**
-     * Starts the mod
+     * Sets up the class
      * @constructor
      * @param {string} [connectionURL = 'www.freeriderhd.com']
      */
@@ -118,12 +118,12 @@ class user {
     /**
      * Sets token.
      * Does not require login
-     * @param {string} asr - Account token (ask Goodra how to obtain)
+     * @param {string} token - your FRHD app_signed_request
      */
-    login(asr = '', cb = () => { }) {
-        if (!asr || typeof asr !== 'string') return cb(error('Invalid arguments'));
-        this.token = asr;
-        token = asr;
+    login(token = '', cb = () => { }) {
+        if (!token || typeof token !== 'string') return cb(error('Invalid arguments'));
+        this.token = token;
+        token = token;
         cb();
     }
     /**
