@@ -4,7 +4,7 @@
   "description": "An app to communicacte with FRHD",
   "main": "index.js",
   "author": "GoodraFRHD",
-  "license": "GNU General Public License v3.0",
+  "license": "GNU General Public License v3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/ObeyLordGoomy/frhd.js.git"
