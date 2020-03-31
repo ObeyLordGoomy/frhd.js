@@ -7,7 +7,7 @@ let token = null,
 
 //Functions
 function error(info) {
-    ret(!1, !1, `Error: ${info}`);
+    return ret(!1, !1, `Error: ${info}`);
 }
 
 function ret(tf, d = !1, ms = !1) {
@@ -44,17 +44,6 @@ function request(method, path, body, callback) {
         req.write(`${body}&ajax=!0&app_signed_request=${token}&t_1=ref&t_2=desk`);
 
     req.end();
-}
-
-function t2t(ticks) {
-    let t = ticks / 30 * 1e3;
-    t = parseInt(t, 10);
-    let e = (t / 6e4) | 0
-        , i = (t - 6e4 * e) / 1e3;
-    return i = i.toFixed(2),
-        10 > e && (e = e),
-        10 > i && (i = "0" + i),
-        e + ":" + i
 }
 
 //JSDoc Stuff
@@ -114,6 +103,7 @@ class user extends EventEmitter {
     get connectionURL() {
         return baseURL
     }
+    
     /**
      * Gets info about a user from name.
      * Does not require login
@@ -122,7 +112,7 @@ class user extends EventEmitter {
      */
     getUserData(uName, cb = () => { }) {
         if (!uName || typeof uName !== 'string') return error('Invalid arguments');
-        request('GET', `/u/${uName.replace(/[^A-Z0-9]/ig, "")}?ajax=true`, void 0,
+        request('GET', `/u/${uName.replace(/[^A-Z0-9_]/ig, "")}?ajax=true`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
                 if (err) return cb(error(err));
@@ -138,24 +128,39 @@ class user extends EventEmitter {
      */
     loginVerify(cb = () => { }) {
         if (!this.token) return cb(error('You are not logged in'));
-        request('POST', `/datapoll/poll_request`, `notifications=!0`,
+        request('GET', `/?ajax=!0&app_signed_request=${this.token}`, void 0,
             (err, data) => {
                 if (err) return cb(error(err));
-                if (!data.user) return ret(!1, !1, `Token is invalid or you are not logged in`);
+                data = JSON.parse(data);
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
     }
     /**
+     * Gets your user data
+     * @param {RequestCallback} [cb = () => {}] - Callback
+     */
+    getMyUser(cb = () => { }){
+        if (!this.token) return cb(error('You are not logged in'));
+        this.loginVerify(({status, data, msg}) => {
+            if(!status) return cb(error(msg));
+            this.getUserData(this.user.d_name, ({status, data, msg}) => {
+                if(!status) return cb(error(msg));
+                this.user = data.user;
+                cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
+            })
+        });
+    }
+    /**
      * Sets token.
      * Does not require login
-     * @param {string} token - your FRHD app_signed_request
+     * @param {string} asr - your FRHD app_signed_request
      */
-    login(token = '', cb = () => { }) {
-        if (!token || typeof token !== 'string') return cb(error('Invalid arguments'));
-        this.token = token;
-        token = token;
+    login(asr = '', cb = () => { }) {
+        if (!asr || typeof asr !== 'string') return cb(error('Invalid arguments'));
+        this.token = asr;
+        token = asr;
         cb();
     }
     /**
@@ -176,6 +181,7 @@ class user extends EventEmitter {
         request('POST', '/datapoll/poll_request', 'notifications=true',
             (err, data) => {
                 if (err !== void 0) return cb(error(err));
+                data = JSON.parse(data);
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
@@ -187,7 +193,7 @@ class user extends EventEmitter {
      */
     getNotifications(cb = () => { }) {
         if (!tId || typeof tId !== 'number') return cb(error('Invalid arguments'));
-        request('GET', `https://www.freeriderhd.com/notifications?ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`, void 0,
+        request('GET', `/notifications?ajax=true&app_signed_request=${this.token}&t_1=ref&t_2=desk`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
                 if (err) return cb(error(err));
@@ -206,6 +212,7 @@ class user extends EventEmitter {
         if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/account/edit_profile', `name=u_name&value=${encodeURIComponent(name.replace(/[^A-Z0-9]/ig, ""))}`,
             (err, data) => {
+                data = JSON.parse(data);
                 if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
@@ -222,6 +229,7 @@ class user extends EventEmitter {
         if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/account/edit_profile', `name=about&value=${encodeURIComponent(desc).replace('%20', '+')}`,
             (err, data) => {
+                data = JSON.parse(data);
                 if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
@@ -239,6 +247,7 @@ class user extends EventEmitter {
         if (!this.token) return cb(error('You are not logged in'));
         request('POST', '/account/change_password', `old_password=${encodeURIComponent(oldpass).replace('%20', '+')}&new_password=${encodeURIComponent(newpass).replace('%20', '+')}`,
             (err, data) => {
+                data = JSON.parse(data);
                 if (err !== void 0) return cb(error(err));
                 this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
@@ -308,6 +317,15 @@ class user extends EventEmitter {
             }
         );
     }
+    getRandomTrack(cb = () => { }) {
+        request('GET', `/random/track`, void 0,
+            (err, data) => {
+                data = JSON.parse(data);
+                if (err) return cb(error(err));
+                cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
+            }
+        );
+    }
     /**
      * Leaves a comment on a track
      * @param {number} tId - ID of the track
@@ -320,7 +338,6 @@ class user extends EventEmitter {
         request('POST', '/track_comments/post', `t_id=${tId}&msg=${encodeURIComponent(msg).replace('%20', '+')}`,
             (err, data) => {
                 if (err !== void 0) return cb(error(err));
-                this.user = data.user;
                 cb(ret(!0, data, data.msg ? data.msg : 'Sucuess!'));
             }
         );
