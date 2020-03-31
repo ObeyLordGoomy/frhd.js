@@ -112,7 +112,7 @@ class user extends EventEmitter {
      */
     getUserData(uName, cb = () => { }) {
         if (!uName || typeof uName !== 'string') return error('Invalid arguments');
-        request('GET', `/u/${uName.replace(/[^A-Z0-9_]/ig, "")}?ajax=true`, void 0,
+        request('GET', `/u/${uName.replace(/[^A-Z0-9_\.]/ig, "")}?ajax=true`, void 0,
             (err, data) => {
                 data = JSON.parse(data);
                 if (err) return cb(error(err));
