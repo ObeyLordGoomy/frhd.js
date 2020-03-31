@@ -1,8 +1,8 @@
 # frhd.js
-FreeRiderHD api client for node.js by GoodraFRHD
+FreeRiderHD tool for making api calls and editing tracks
 
-Example script
-```const fr = require('../index.js');
+Example script for api
+```const fr = require('frhd.js');
 const FRHD = new fr.user();
 
 FRHD.getTrackData(700000, ({status, data, msg}) => {

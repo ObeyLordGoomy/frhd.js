@@ -1,3 +1,4 @@
 module.exports = {
-    user: require('./scr/user.js')
+    user: require('./scr/user'),
+    track: require('./scr/track')
 }
