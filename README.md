@@ -1,7 +1,7 @@
 # frhd.js
 FreeRiderHD tool for making api calls and editing tracks
 
-Example script for api
+Example script for api calls
 ```const fr = require('frhd.js');
 const FRHD = new fr.user();
 
