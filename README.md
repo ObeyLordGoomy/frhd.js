@@ -1,5 +1,7 @@
 # frhd.js
-FreeRiderHD tool for making api calls and editing tracks
+A lightweight tool for interacting with FreeRiderHD that has no dependencies.
+
+Allows api calls and track managemnet.
 
 Example script for api calls
 ```const fr = require('frhd.js');
