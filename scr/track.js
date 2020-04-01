@@ -59,7 +59,7 @@ class track {
     addLine(type = 'physics', line){
         line.length % 2 == 1 && (line.pop());
         if (line.length < 4) return;
-        if(type != 'physics' || type != 'scenery') type = 'physics';
+        if(type != 'physics' && type != 'scenery') type = 'physics';
         for (let index = 0; index < this[`${type}Lines`].length; index++) {
             let lines = this[`${type}Lines`][index];
             if(lines[0] == line[0] && lines[1] == line[1]){
