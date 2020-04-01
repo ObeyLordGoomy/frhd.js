@@ -71,17 +71,14 @@ class track {
                 }
                 line = newArgs.concat(lines);
                 this[`${type}Lines`].splice(index, 1);
-                index = 0;
             } else if(lines[0] == line[line.length - 2] && lines[1] == line[line.length - 1]){
                 lines.splice(0,2);
                 line = line.concat(lines);
                 this[`${type}Lines`].splice(index, 1);
-                index = 0;
             } else if(lines[lines.length - 2] == line[0] && lines[lines.length - 1] == line[1]){
                 line.splice(0,2);
                 line = lines.concat(line);
                 this[`${type}Lines`].splice(index, 1);
-                index = 0;
             } else if(lines[lines.length - 2] == line[line.length - 2] && lines[lines.length - 1] == line[line.length - 1]){
                 line.splice(line.length - 2, 2);
                 let newArgs = [];
@@ -91,7 +88,6 @@ class track {
                 }
                 line = lines.concat(newArgs);
                 this[`${type}Lines`].splice(index, 1);
-                index = 0;
             }
         }
         this[`${type}Lines`].push(line);
