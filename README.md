@@ -2,6 +2,7 @@
 A lightweight tool for interacting with FreeRiderHD that has no dependencies.
 
 Join the support server!
+
 ![Discord Shield](https://discordapp.com/api/guilds/433321514906025991/widget.png?style=shield)
 
 Allows api calls and track managemnet.
