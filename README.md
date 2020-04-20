@@ -4,7 +4,7 @@
 
 ## A lightweight tool for interacting with FreeRiderHD that has no dependencies.
 
-Allows api calls and track managemnet.
+Allows api calls and track management.
 
 Example script for api calls
 ```
