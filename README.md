@@ -36,3 +36,5 @@ track.addTarget(30, 30);
 track.addPhysicsLine(-100, -100, -100, 90, 100, 95);
 console.log(track.code);
 ```
+
+Don't use JavaScript? Check out [frhd-python](https://pypi.org/project/frhd-python/)!
