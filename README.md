@@ -2,7 +2,7 @@
 
 ![Discord Shield](https://discordapp.com/api/guilds/433321514906025991/widget.png?style=shield)
 
-## A lightweight tool for interacting with FreeRiderHD that has no dependencies.
+## A lightweight tool for interacting with FreeRiderHD
 
 Allows api calls and track management.
 
@@ -37,4 +37,4 @@ track.addPhysicsLine(-100, -100, -100, 90, 100, 95);
 console.log(track.code);
 ```
 
-Don't use JavaScript? Check out [frhd-python](https://pypi.org/project/frhd-python/)!
+## Don't use JavaScript? Check out [frhd-python](https://pypi.org/project/frhd-python/)!
